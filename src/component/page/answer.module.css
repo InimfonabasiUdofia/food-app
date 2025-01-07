@@ -1,0 +1,25 @@
+.answer{
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    cursor: pointer;
+    margin: 10px 20px 0px 20px;
+    border: 1px solid rgb(226, 226, 226)  ;
+    font-weight: 500;
+}
+.answerclick{
+    cursor: pointer;
+    margin: 10px 20px 0px 20px;
+    border: 1px solid rgb(110, 110, 110)  ;
+    background-color: black;
+    color: white;
+    font-weight: 500;
+}
+.submitbtn{
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.09rem;
+    border: 1px solid rgb(105, 105, 105);
+    position: relative;
+    top: 85px;
+}
