@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import Home from './component/page/home';
 import Result from './component/page/result.jsx'
+import { Login } from './auth/login.js';
+import { Signup } from './auth/signup.js';
 function App() {
   const router = createBrowserRouter([
     {
@@ -19,6 +21,14 @@ function App() {
     {
       path: "/result/:score",
       element:  <Result/>,
+    },
+    {
+      path: "/login",
+      element:  <Login/>,
+    },
+    {
+      path: "/signup",
+      element:  <Signup/>,
     },
   ]);
   return(
