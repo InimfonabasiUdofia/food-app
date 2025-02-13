@@ -16,10 +16,10 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/exams/:id/:subject",
-      element: <><ProtectedRoute ><Exams /></ProtectedRoute></>,
+      element: <><Exams /></>,
     }, {
       path: "/",
-      element:  <><ProtectedRoute ><Home/></ProtectedRoute></>,
+      element:  <><Home/></>,
     },
     {
       path: "/result/:score",
@@ -38,7 +38,7 @@ function App() {
       element:  <Dashboard/>,
     },
     {
-      path: "*", // Catch-all route for 404
+      path: "*", 
       element: <NotFound />,
     },
     
