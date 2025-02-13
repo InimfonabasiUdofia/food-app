@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import styles from './home.module.css'
 import { NavLink } from 'react-router-dom'
+import { Nav } from '../../nav/nav'
 const Home = () => {
   const [iconno,setIconno]=useState(0)
     const [big,setBig]=useState(false)
@@ -65,6 +66,7 @@ const Home = () => {
   return (
   
     <>
+      <div className={`${styles.navcon} `}>
         <div className={`${styles.nav} `}>  
         {icon.map((item,index)=>{
             return(
@@ -109,10 +111,13 @@ const Home = () => {
            
         </div>
         </div>
+       </div> 
+        <Nav></Nav>
         <div className="container mx-auto px-10 flex ">
+          
             <div className="grid md:grid-cols-2"> 
-
-                <div  className={`${styles.fontdesign} exam-preparation-page pt-9`}>
+                 
+                <div  className={`${styles.fontdesign} exam-preparation-page pt-4`}>
                     <h1 className='colororange'>Welcome to Your Exam Preparation!</h1>
                     <p >You're just a few steps away from showcasing your knowledge.</p>
 
@@ -141,7 +146,7 @@ const Home = () => {
                     <p>Please contact support immediately for assistance.</p>
                 </div>
               <div className="flex justify-center  self-center">
-              <NavLink to={`./exams/${icon[iconno].no}`}> <button  className='mx-20 bg-black text-white pt-2 pb-2 px-3 rounded mt-5 '>Next</button></NavLink>
+              <NavLink to={`./exams/${icon[iconno].no}/${icon[iconno].text}`}> <button  className='mx-20 bg-black text-white pt-2 pb-2 px-3 rounded mt-5 '>Next</button></NavLink>
               </div>
             </div>
         </div>

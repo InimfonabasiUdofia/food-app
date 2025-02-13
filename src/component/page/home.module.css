@@ -3,9 +3,12 @@
     position: fixed;
     color: white;
     border-radius: 5px;
-    margin: 10px;
     padding: 10px 14px 10px 14px;
-    height: 98%;
+    height: 97%;
+}
+.navcon{
+    position: absolute;
+    margin: 0px 0px 0px 10px;
 }
 .text{
     font-size: 1.1rem;

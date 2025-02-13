@@ -4,8 +4,10 @@ import style from './answer.module.css';
 import he from 'he';
 
 import Question from '../question.tsx'
-import Answers from '../answer/answer.tsx'
-import { Link, useParams ,useNavigate } from 'react-router-dom'
+
+import {  useParams ,useNavigate } from 'react-router-dom'
+import { addDoc,collection } from 'firebase/firestore';
+import {db}from '../../configure/configure.tsx'
 
 
 interface SelectedAnswers {
@@ -20,13 +22,13 @@ interface Answerprop {
 const Exams = () => {
   
   const [isloading, setIsLoading] = useState(false);
-  const { id } = useParams();
+  const { id,subject } = useParams();
   const navigate = useNavigate()
   const [number, setNumber] = useState(0);
   const [ans, setAns] = useState<Answerprop[]>([]);
   const [start ,setStart]=useState(false)
-  const [boxcolor,setBoxcolor]=useState(false)
-  const [error,setError]=useState(false)
+  const [_error,setError]=useState(false)
+  const getcollection=collection(db,'student')
 
   async function answer() {
       try {
@@ -43,31 +45,13 @@ const Exams = () => {
           console.error('There was a problem with the fetch operation:', error);
           setError(true)
       } finally {
-          setIsLoading(false); // Set loading to false here
+          setIsLoading(false); 
       }
   } 
 
       console.log(ans)
       console.log(number)
-      
-      // const [timeRemaining, setTimeRemaining] = useState(20 * 60); // 20 minutes in seconds
-      
-      //     useEffect(() => {
-      //         const interval = setInterval(() => {
-      //             setTimeRemaining((prevTime) => {
-      //                 if (prevTime <= 0) {
-      //                     clearInterval(interval);
-      //                     return 0; // Stop at 0
-      //                 }
-      //                 return prevTime - 1;
-      //             });
-      //         }, 1000);
-      
-      //         return () => clearInterval(interval); // Cleanup on unmount
-      //     }, []);
-      
-      //     const minutes = Math.floor(timeRemaining / 60);
-      //     const seconds = timeRemaining % 60;
+     
       const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
       const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]); 
     
@@ -90,7 +74,7 @@ const Exams = () => {
         }
         return array;
       };
-      let [answervalue,setAnswervalue]=useState(false)
+      let [_answervalue,setAnswervalue]=useState(false)
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedAnswers({
           ...selectedAnswers,
@@ -117,7 +101,43 @@ const Exams = () => {
         console.log("Total Score Calculated:", totalScore); 
       };
       console.log("Total Score Calculated:", score)
-      
+      const [timeLeft, setTimeLeft] = useState(0.1 * 60); // 30 minutes in seconds
+
+      useEffect(() => {
+        if (timeLeft === 0) {
+          (async () => {
+            checkAnswer();
+            try {
+              checkAnswer();
+    
+              // Add document to Firestore
+              await addDoc(collection(db, 'results'), {
+                Score: totalScore,
+                Subject: subject,
+                studentname: '' // Replace with actual student name
+              });
+    
+              // Navigate to the results page after successful submission
+              navigate(`/result/${totalScore}`);
+            } catch (e) {
+              console.log(e);
+            }
+          })();
+          return;
+        }
+    
+        const intervalId = setInterval(() => {
+          setTimeLeft((prevTime) => prevTime - 1);
+        }, 1000);
+    
+        return () => clearInterval(intervalId); // Cleanup interval on unmount
+      }, [timeLeft, navigate, subject, totalScore, checkAnswer]);
+    
+      const formatTime = (seconds:any) => {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+      }
         return (
           <>   
           {!start?<div className="container mx-auto">
@@ -136,10 +156,14 @@ const Exams = () => {
           <>
             {!isloading ?
               <>
-              <div className="container mx-auto mt-4  lg:px-20 ">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 ">
+             
+              <div className="container mx-auto mt-4  lg:px-20  ">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3  ">
                   <div>
-                    <div className="trapezoid mt-5 ">
+                    <div className="trapezoid mt-5  mx-5">
+                    <div className='' >
+                      <h2 className='text-[1.1rem]  font-bold absolute text-white px-5 pt-4'>{formatTime(timeLeft)}</h2>
+                    </div>
                       <div className="relative bottom-7 flex justify-center">
                         <div className="box">
                           <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" className="bi bi-question" viewBox="0 0 16 16">
@@ -196,7 +220,7 @@ const Exams = () => {
                     </div>  
                     </div>   
                 </div>
-                <div className=" grid md:grid-cols-2 mt-6 text-center" >
+                <div className=" grid md:grid-cols-2 mt-6 text-center mx-5" >
                   <div className="flex flex-wrap">
                     {ans.map((_item,index)=>{
                         return(<>
@@ -211,17 +235,30 @@ const Exams = () => {
                 </div>
                 <div className=" mx-3 mt-4 lg:text-left md:text-center sm:text-left text-center">
                   
-                  <button onClick={
-                    ()=>{
-                      checkAnswer()
-                      const confirmSubmit = window.confirm('Do you want to submit?'); // Show confirmation dialog
+                <button
+                  onClick={async () => {
+                    const confirmSubmit = window.confirm('Do you want to submit?'); // Show confirmation dialog
 
-                      if (confirmSubmit) {
-                          navigate(`/result/${totalScore}`); // Navigate to the results page
+                    if (confirmSubmit) {
+                      try {
+                        // Check the answer first
+                        checkAnswer();
+
+                        // Add document to Firestore
+                        await addDoc(getcollection, {
+                          Score: totalScore,
+                          Subject: subject,
+                          studentname: '' // You might want to replace this with the actual student name
+                        });
+
+                        // Navigate to the results page after successful submission
+                        navigate(`/result/${totalScore}`);
+                      } catch (e) {
+                        console.log(e); // Log any errors that occur during the submission
                       }
                     }
-                    
-                  }  className='submitbtn' >Submit</button>
+                  } 
+                  } className='submitbtn' >Submit</button>
               </div>
               
               </div>
@@ -229,7 +266,7 @@ const Exams = () => {
             </>  :
             <>
               <div className="container mx-auto ">
-                <div className="grid md:grid-cols-2 flex lg:px-20  ">
+                <div className="grid md:grid-cols-2 flex lg:px-20  mx-5">
                   <div className="rect mt-5"></div>
                   <div className="md:mt-14">
                     <div className="rect1"></div>
