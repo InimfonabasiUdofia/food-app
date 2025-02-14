@@ -2,7 +2,7 @@ import { useState,useEffect } from 'react'
 import styles from './nav.module.css'
 import { signOut } from 'firebase/auth'
 import { sign } from '../configure/configure'
-import {  useNavigate } from 'react-router-dom'
+import {  useNavigate,Link } from 'react-router-dom'
 import { db } from '../configure/configure';
 import {  getDoc, doc, setDoc } from "firebase/firestore";
 
@@ -66,7 +66,18 @@ export const Nav = () => {
         </div>
         <a className={styles.link} href="">Exams</a><br />
         <a className={styles.link} href="">Result</a><br />
-        <a className={styles.link} href="">Logout</a><br />
+        <a className={styles.link} href=""onClick={()=>{
+                  async(e:any)=>{
+                    e.preventDefault();
+                    try{
+                      await signOut(sign)
+                    }catch(e){
+                      console.log(e)
+                    }
+                  }
+                  
+                  navigate(`/login`);
+                }}>Logout</a><br />
       </div>
    </div>
     }
@@ -74,8 +85,8 @@ export const Nav = () => {
        <div className={styles.box}>
             <div className={styles.night}><p>{userauth?.username}</p></div>
             <div className={styles.linkcon}>
-                <a className={styles.link2} href="">Exams</a>
-                <a className={styles.link2} href="">Result</a>
+              <Link className={`${styles.link2} active`}  to='/'>Exams</Link>
+              <Link className={styles.link2} to='dashboard'>Result</Link>
                 <a className={styles.link2} href=""onClick={()=>{
                   async(e:any)=>{
                     e.preventDefault();

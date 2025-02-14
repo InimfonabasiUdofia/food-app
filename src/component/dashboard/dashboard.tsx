@@ -26,9 +26,7 @@ export const Dashboard = () => {
                 data: [7, 23], // Data for each segment
                 backgroundColor: [
                     'white',
-                    'black',
-                   
-                    
+                    'black',  
                 ],
                 borderColor: [
                    ' black'

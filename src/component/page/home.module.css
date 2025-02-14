@@ -3,8 +3,18 @@
     position: fixed;
     color: white;
     border-radius: 5px;
-    padding: 10px 14px 10px 14px;
-    height: 97%;
+    
+    height: 98%;
+}
+@media(max-width:900px){
+    .nav{
+        padding: 35px 14px 10px 14px;
+    }
+}
+@media(min-width:900px){
+    .nav{
+        padding: 10px 14px 10px 14px;
+    }
 }
 .navcon{
     position: absolute;

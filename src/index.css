@@ -81,8 +81,8 @@
 .colororange{
   color: rgb(247, 163, 7);
 }
-.normal{
- 
+.active{
+  color: rgb(250, 178, 43);
 }
 @keyframes shine {
   0% {

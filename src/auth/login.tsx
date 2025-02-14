@@ -5,6 +5,7 @@ import { FirebaseError } from 'firebase/app';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import submitIcon from '/Dual Ring@1x-1.0s-200px-200px.svg';
+import { Link } from 'react-router-dom';
 
 export const Login = () => {
   const [email ,setEmail]=useState('')
@@ -114,6 +115,7 @@ export const Login = () => {
        
         </button>
         </div>
+        <p className='pt-3'>Dont have an account ? <Link className='text-[#654456] underline' to="/Signup">Signup</Link></p>
        </div>
        <ToastContainer 
         position="top-right" // Position of the toast

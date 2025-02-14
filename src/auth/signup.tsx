@@ -1,9 +1,9 @@
 import  {  useState } from 'react'
-
+import { Link } from 'react-router-dom'
 import {db}from '../configure/configure.tsx'
 import{collection ,addDoc }from 'firebase/firestore'
 import {sign,provider} from '../configure/configure.tsx'
-import { createUserWithEmailAndPassword,signInWithPopup ,signOut} from 'firebase/auth';
+import { createUserWithEmailAndPassword,signInWithPopup } from 'firebase/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FirebaseError } from 'firebase/app';
@@ -74,15 +74,6 @@ export const Signup = () => {
             console.error(e)
         }
     }
-    const logout =async ()=>{
-        try{
-            await signOut(sign)
-        }
-        catch(e){
-            console.error(e)
-        }
-    }
-    
     console.log(sign?.currentUser?.email)
   return (
     <div className="container grid md:grid-cols-3  mx-auto px-5 text-center ">
@@ -143,7 +134,7 @@ export const Signup = () => {
             <p className='text-[1.09rem] font-bold'>Continue with Goggle</p>
         </button>
         </div>
-        <button className='w-[90%]' onClick={logout}>Log Out</button>
+        <p className='pt-3'>Already have an account ? <Link className='text-[#654456] underline' to="/login">Login</Link></p>
        </div>
        <ToastContainer 
         position="top-right" // Position of the toast
