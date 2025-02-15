@@ -2,7 +2,7 @@ import { useState,useEffect } from 'react'
 import styles from './nav.module.css'
 import { signOut } from 'firebase/auth'
 import { sign } from '../configure/configure'
-import {  useNavigate,Link,NavLink } from 'react-router-dom'
+import {  useNavigate,NavLink } from 'react-router-dom'
 import { db } from '../configure/configure';
 import {  getDoc, doc, setDoc } from "firebase/firestore";
 
