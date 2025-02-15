@@ -67,16 +67,18 @@ export const Nav = () => {
         <NavLink className={({ isActive }) => isActive ? `${styles.link} active` : styles.link} to='/'>Exams</NavLink><br />
         <NavLink className={({ isActive }) => isActive ? `${styles.link} active` : styles.link} to='/dashboard'>Result</NavLink><br />
         <a className={styles.link} href=""onClick={()=>{
-                  async(e:any)=>{
+                  async (e: React.FormEvent) => {
                     e.preventDefault();
-                    try{
-                      await signOut(sign)
-                    }catch(e){
-                      console.log(e)
+                    try {
+                        await signOut(sign); // Assuming `sign` is defined elsewhere
+                        navigate('/login'); // Redirect to login page
+                    } catch (error) {
+                        console.error('Sign-out failed:', error);
+                        // Optionally, display an error message to the user
                     }
-                  }
+                };
                   
-                  navigate(`/login`);
+                  
                 }}>Logout</a><br />
       </div>
    </div>
@@ -92,12 +94,13 @@ export const Nav = () => {
                     e.preventDefault();
                     try{
                       await signOut(sign)
+                      navigate(`/login`);
                     }catch(e){
                       console.log(e)
                     }
                   }
                   
-                  navigate(`/login`);
+                 
                 }}>Logout</a>
                 
             </div>
