@@ -2,7 +2,7 @@ import { useState,useEffect } from 'react'
 import styles from './nav.module.css'
 import { signOut } from 'firebase/auth'
 import { sign } from '../configure/configure'
-import {  useNavigate,Link } from 'react-router-dom'
+import {  useNavigate,Link,NavLink } from 'react-router-dom'
 import { db } from '../configure/configure';
 import {  getDoc, doc, setDoc } from "firebase/firestore";
 
@@ -64,8 +64,8 @@ export const Nav = () => {
             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
         </svg>
         </div>
-        <a className={styles.link} href="">Exams</a><br />
-        <a className={styles.link} href="">Result</a><br />
+        <NavLink className={({ isActive }) => isActive ? `${styles.link} active` : styles.link} to='/'>Exams</NavLink><br />
+        <NavLink className={({ isActive }) => isActive ? `${styles.link} active` : styles.link} to='/dashboard'>Result</NavLink><br />
         <a className={styles.link} href=""onClick={()=>{
                   async(e:any)=>{
                     e.preventDefault();
@@ -85,8 +85,8 @@ export const Nav = () => {
        <div className={styles.box}>
             <div className={styles.night}><p>{userauth?.username}</p></div>
             <div className={styles.linkcon}>
-              <Link className={`${styles.link2} active`}  to='/'>Exams</Link>
-              <Link className={styles.link2} to='dashboard'>Result</Link>
+            <NavLink className={({ isActive }) => isActive ? `${styles.link2} active` : styles.link} to='/'>Exams</NavLink>
+            <NavLink className={({ isActive }) => isActive ? `${styles.link2} active` : styles.link} to='/dashboard'>Result</NavLink>
                 <a className={styles.link2} href=""onClick={()=>{
                   async(e:any)=>{
                     e.preventDefault();

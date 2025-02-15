@@ -82,7 +82,7 @@
   color: rgb(247, 163, 7);
 }
 .active{
-  color: rgb(250, 178, 43);
+  color: rgb(250, 178, 43) !important;
 }
 @keyframes shine {
   0% {
