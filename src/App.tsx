@@ -19,14 +19,21 @@ function App() {
       element: <><Exams /></>,
     }, {
       path: "/",
-      element:  <> 
-      <ProtectedRoute>
-      <Home/>
-    </ProtectedRoute></>,
+      element: 
+      <> 
+        <ProtectedRoute>
+          <Home/>
+        </ProtectedRoute>
+      </>,
     },
     {
       path: "/result/:score",
-      element:  <Result/>,
+      element:     
+      <> 
+      <ProtectedRoute>
+        <Result/>
+      </ProtectedRoute>
+    </>,
     },
     {
       path: "/login",

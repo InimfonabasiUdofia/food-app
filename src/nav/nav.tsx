@@ -66,20 +66,22 @@ export const Nav = () => {
         </div>
         <NavLink className={({ isActive }) => isActive ? `${styles.link} active` : styles.link} to='/'>Exams</NavLink><br />
         <NavLink className={({ isActive }) => isActive ? `${styles.link} active` : styles.link} to='/dashboard'>Result</NavLink><br />
-        <a className={styles.link} href=""onClick={()=>{
+        <NavLink className={styles.link} to="/login"onClick={()=>{
                   async (e: React.FormEvent) => {
                     e.preventDefault();
                     try {
-                        await signOut(sign); // Assuming `sign` is defined elsewhere
-                        navigate('/login'); // Redirect to login page
+                        await signOut(sign);
+                        // Assuming `sign` is defined elsewhere
+                        navigate('/login');// Redirect to login page
                     } catch (error) {
                         console.error('Sign-out failed:', error);
+                       
                         // Optionally, display an error message to the user
                     }
                 };
                   
                   
-                }}>Logout</a><br />
+                }}>Logout</NavLink><br />
       </div>
    </div>
     }
@@ -89,19 +91,21 @@ export const Nav = () => {
             <div className={styles.linkcon}>
             <NavLink className={({ isActive }) => isActive ? `${styles.link2} active` : styles.link} to='/'>Exams</NavLink>
             <NavLink className={({ isActive }) => isActive ? `${styles.link2} active` : styles.link} to='/dashboard'>Result</NavLink>
-                <a className={styles.link2} href=""onClick={()=>{
+                <NavLink className={styles.link2} to="/login"onClick={()=>{
                   async(e:any)=>{
                     e.preventDefault();
                     try{
                       await signOut(sign)
+                      window.location.href = '/login'; 
                       navigate(`/login`);
                     }catch(e){
                       console.log(e)
                     }
+                    navigate('/login');
                   }
                   
                  
-                }}>Logout</a>
+                }}>Logout</NavLink>
                 
             </div>
             <div className={styles.linkcon2}>
