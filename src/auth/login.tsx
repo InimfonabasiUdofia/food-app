@@ -1,157 +1,173 @@
-import { useState } from 'react'
-import {sign,provider} from '../configure/configure.tsx'
-import { signInWithEmailAndPassword ,signInWithPopup} from 'firebase/auth'
-import { FirebaseError } from 'firebase/app';
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast } from 'react-toastify';
-import submitIcon from '/Dual Ring@1x-1.0s-200px-200px.svg';
-import { Link ,useNavigate} from 'react-router-dom';
+import { useState, useCallback, memo } from 'react'
+import { sign } from '../configure/configure'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { FirebaseError } from 'firebase/app'
+import { Link, useNavigate } from 'react-router-dom'
+import LoadingSpinner from '../../public/Dual Ring@1x-1.0s-200px-200px.svg'
 
-export const Login = () => {
-  const [eyeslash,setEyeslash]=useState(false)
-  const [inputpassword,setInputpassword]=useState('Password')
-  const [email ,setEmail]=useState('')
-  const [password ,setPassword]=useState('')
-  const [checkerror ,setError]=useState('An error occurred. Please try again.')
-  const [Submitisloading ,setSubmitIsloading]=useState(false)
-  const [Submitisloadinggoogle ,setSubmitIsloadinggoogle]=useState(false)
+// Memoized Input Component
+const InputField = memo(({
+  type,
+  value,
+  onChange,
+  placeholder,
+  icon,
+  onIconClick
+}: {
+  type: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  placeholder: string
+  icon?: React.ReactNode
+  onIconClick?: () => void
+}) => (
+  <div className="relative mb-4">
+    <input
+      type={type}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      aria-label={placeholder}
+    />
+    {icon && (
+      <button
+        type="button"
+        onClick={onIconClick}
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none"
+        aria-label={type === 'password' ? 'Show password' : 'Hide password'}
+      >
+        {icon}
+      </button>
+    )}
+  </div>
+))
+
+const Login = () => {
+  const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
-  const submit=async()=>{
-      try{
-        setSubmitIsloading(true)
-        await signInWithEmailAndPassword(sign,email,password)
-      }catch(err){
-        console.log(err)
-        const error = err as FirebaseError; // Cast the error to FirebaseError
-        if (error.code === 'auth/invalid-email') {
-          setError('Invalid email address.');
-        } else if (error.code === 'auth/user-disabled') {
-          setError('User account disabled.');
-        } else if (error.code === 'auth/user-not-found') {
-          setError('User not found.');
-        } else if (error.code === 'auth/wrong-password') {
-          setError('Wrong password.');
-        }else if (error.code === 'auth/too-many-requests') {
-          setError('Too many requests. Try again later.');
-        }else if (error.code === 'auth/network-request-failed') {
-          setError('Network error. Please check your connection.');
-        } else {
-          setError('Error during login. Please try again.');
-        }
-        toast.error(checkerror, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }finally{
-        navigate('/')
-        setSubmitIsloading(false)
-      }
-     
-    }
-    const createusergoggle =async ()=>{
-      try{
-        setSubmitIsloadinggoogle(true)
-          await signInWithPopup(sign,provider)
-      }
-      catch(e){
-          console.error(e)
-      }finally{
-        navigate('/')
-        setSubmitIsloadinggoogle(false)
-      }
-  }
-  return (
-    <div className="container grid md:grid-cols-3  mx-auto px-5 text-center ">
-      <div className=""></div>
-       <div className="">
-       <p className='text-center text-[1.7rem] font-bold pt-8'>Login</p>
 
-        <div className=" mt-12">
-            <input type="text" className='border-2 border-black w-[85%] pt-1 pb-1 px-2' placeholder='Email'  onChange={(e)=>{
-               setEmail(e.target.value)
-            }} name=''/>
-        </div>
-        <div className="mt-5">
-            <input type={inputpassword} className='w-[85%] border-2 border-black w-[85%] pt-1 pb-1  px-2 relative left-[10px]' placeholder='Password' onChange={(e)=>{
-                   setPassword(e.target.value)
-            }} name=''/>
-            <div className='float-right relative right-[50px] top-[10px]'>
-            {eyeslash ?
-            <>
-              <svg onClick={()=>{
-                setEyeslash(false)
-                setInputpassword('Password')
-              }} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"  viewBox="0 0 16 16">
-                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
-              </svg>
-            </>:
-             <svg onClick={()=>{
-                          setEyeslash(true)
-                          setInputpassword('text')
-                          
-                        }}  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"  viewBox="0 0 16 16">
-              <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
-              <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
-              <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
-            </svg>}
-            </div>
-        </div>
-        <button onClick={submit}  className='mt-5 w-[85%] pt-2 pb-2 bg-black text-white text-[1.09rem] font-bold'>{!Submitisloading ?'Submit':<div className='flex justify-center' ><img className='text-center  h-[26px]' src={submitIcon} alt="" /></div>}</button><br />
-        <button  className='text-[1.1rem] font-bold relative top-3 bg-white px-4 '>or</button>
-          <div className="flex justify-center ">
-            <div className="bg-black h-[2px] w-[85%] "></div>
+  const getErrorMessage = useCallback((error: FirebaseError): string => {
+    const errorMap: Record<string, string> = {
+      'auth/invalid-email': 'Please enter a valid email address',
+      'auth/user-disabled': 'This account has been disabled',
+      'auth/user-not-found': 'No account found with this email',
+      'auth/wrong-password': 'Incorrect password',
+      'auth/too-many-requests': 'Too many attempts. Please try again later',
+      'auth/network-request-failed': 'Network error. Please check your connection',
+    }
+    return errorMap[error.code] || 'Login failed. Please try again'
+  }, [])
+
+  const handleEmailLogin = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    
+    if (!email || !password) {
+      setError('Please fill in all fields')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      await signInWithEmailAndPassword(sign, email, password)
+      navigate('/dashboard')
+    } catch (err) {
+      const error = err as FirebaseError
+      setError(getErrorMessage(error))
+    } finally {
+      setIsLoading(false)
+    }
+  }, [email, password, navigate, getErrorMessage])
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden transition-all transform hover:shadow-xl">
+        <div className="p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
+            <p className="text-gray-600 mt-2">Sign in to your account</p>
           </div>
-        <div className="flex justify-center pt-8">
-        <button onClick={createusergoggle} className='w-[85%] flex  bg-black text-white justify-center gap-3 pt-2 pb-2'>
-        {!Submitisloadinggoogle ?
-        <>
-            <svg
-            width="22"
-            height="21"
-            viewBox="0 0 22 21"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleEmailLogin} className="space-y-6">
+            <InputField
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email address"
+            />
+
+            <InputField
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  {showPassword ? (
+                    <>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </>
+                  ) : (
+                    <>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </>
+                  )}
+                </svg>
+              }
+              onIconClick={() => setShowPassword(!showPassword)}
+            />
+
+            <div className="flex justify-end">
+              <Link 
+                to="/forgot-password" 
+                className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
             >
-            <path
-              d="M21.2958 8.44357H20.45V8.4H11V12.6H16.9341C16.0683 15.0449 13.7421 16.8 11 16.8C7.52082 16.8 4.7 13.9792 4.7 10.5C4.7 7.02082 7.52082 4.2 11 4.2C12.606 4.2 14.067 4.80585 15.1795 5.79547L18.1494 2.82555C16.2741 1.07782 13.7657 0 11 0C5.20137 0 0.5 4.70137 0.5 10.5C0.5 16.2986 5.20137 21 11 21C16.7986 21 21.5 16.2986 21.5 10.5C21.5 9.79597 21.4275 9.10875 21.2958 8.44357Z"
-              fill="#FFC107"
-            />
-            <path
-              d="M1.71088 5.61277L5.16065 8.14275C6.0941 5.8317 8.35475 4.2 11.0002 4.2C12.6062 4.2 14.0673 4.80585 15.1798 5.79547L18.1497 2.82555C16.2744 1.07782 13.7659 0 11.0002 0C6.96718 0 3.46963 2.27692 1.71088 5.61277Z"
-              fill="#FF3D00"
-            />
-            <path
-              d="M10.9996 21C13.7118 21 16.1761 19.9621 18.0393 18.2742L14.7896 15.5243C13.7001 16.3533 12.3686 16.8015 10.9996 16.8C8.26855 16.8 5.94963 15.0586 5.07603 12.6284L1.65198 15.2665C3.38973 18.6669 6.91878 21 10.9996 21Z"
-              fill="#4CAF50"
-            />
-            <path
-              d="M21.2958 8.44354H20.45V8.39996H11V12.6H16.9341C16.52 13.7636 15.774 14.7804 14.7884 15.5247L14.79 15.5237L18.0397 18.2736C17.8098 18.4826 21.5 15.75 21.5 10.5C21.5 9.79594 21.4275 9.10871 21.2958 8.44354Z"
-              fill="#1976D2"
-            />
-            </svg>    
-            <p className='text-[1.09rem] font-bold' >Continue with Goggle</p>
-         </>
-        :<div className='flex justify-center' ><img className='text-center  h-[26px]' src={submitIcon} alt="" /></div>}
-       
-        </button>
+              {isLoading ? <img src={LoadingSpinner} alt="Loading" className="mx-auto h-5 w-5" /> : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              Don't have an account?{' '}
+              <Link 
+                to="/signup" 
+                className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
         </div>
-        <p className='pt-3'>Dont have an account ? <Link className='text-[#654456] underline' to="/Signup">Signup</Link></p>
-       </div>
-       <ToastContainer 
-        position="top-right" // Position of the toast
-        autoClose={5000} // Duration in milliseconds
-        hideProgressBar={false} // Show progress bar
-        closeOnClick // Close on click
-        rtl={false} // Right to left
-        pauseOnFocusLoss // Pause on focus loss
-        draggable // Allow dragging
-        pauseOnHover // Pause on hover
-      />
+      </div>
     </div>
   )
 }
+
+export default Login
