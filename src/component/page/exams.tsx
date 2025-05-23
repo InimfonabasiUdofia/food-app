@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { addDoc, collection } from 'firebase/firestore';
 import he from 'he';
 import { db } from '../../configure/configure.tsx';
+import { getAuth } from 'firebase/auth';
 
 interface QuestionData {
   incorrect_answers: string[];
@@ -109,7 +110,7 @@ const Exams = () => {
         : score;
     }, 0);
   }, [questions, selectedAnswers]);
-
+const {currentUser}=getAuth()
   // Submit exam
   const submitExam = useCallback(async () => {
     setIsSubmitting(true);
@@ -119,7 +120,8 @@ const Exams = () => {
       await addDoc(collection(db, 'result'), {
         score: score,
         subject: subject,
-        timestamp: new Date()
+        timestamp: new Date(),
+        uid:currentUser?.uid
       });
       
       navigate(`/result/${score}`);

@@ -47,7 +47,7 @@ export const Nav = () => {
         });
       }
     }
-  };
+  }; 
 
   useEffect(() => {
     const unsubscribe = sign.onAuthStateChanged((user) => {

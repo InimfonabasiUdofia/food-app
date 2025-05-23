@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { getDoc, doc, setDoc } from "firebase/firestore";
+import { getDoc, doc,  } from "firebase/firestore";
 import { sign, db } from '../../configure/configure';
 import { useEffect, useState, useCallback } from 'react';
 import { Nav } from '../../nav/nav';
@@ -28,24 +28,12 @@ const Result = () => {
     }
 
     try {
-      const userDocRef = doc(db, "users", currentUser.uid);
+      const userDocRef = doc(db, "auth", currentUser.uid);
       const userDocSnap = await getDoc(userDocRef);
 
       if (userDocSnap.exists()) {
         setUserData({ id: userDocSnap.id, ...userDocSnap.data() } as User);
       } else {
-        await setDoc(userDocRef, {
-          email: currentUser.email,
-          username: currentUser.displayName || `User${currentUser.uid.slice(0, 4)}`,
-          createdAt: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-        });
-        // Use the data we just set instead of fetching again
-        setUserData({
-          id: currentUser.uid,
-          email: currentUser.email || '',
-          username: currentUser.displayName || `User${currentUser.uid.slice(0, 4)}`
-        });
       }
     } catch (err) {
       console.error("Error fetching data: ", err);

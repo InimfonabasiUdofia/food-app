@@ -7,7 +7,7 @@ import { collection, addDoc } from 'firebase/firestore';
 export const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [displayname, setUsername] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const Signup = () => {
     e.preventDefault();
     setError('');
     
-    if (!username || !email || !password) {
+    if (!displayname || !email || !password) {
       setError('Please fill in all fields');
       return;
     }
@@ -31,9 +31,9 @@ export const Signup = () => {
       
       // 1. Create authentication user
       const userCredential = await createUserWithEmailAndPassword(sign, email, password);
-      await addDoc(collection(db, 'auth'), {
+      await addDoc(collection(db, 'users'), {
         uid: userCredential.user.uid,
-        username,
+        displayname,
         email,
         date: new Date(),
       });
@@ -77,7 +77,7 @@ export const Signup = () => {
               <input
                 id="username"
                 type="text"
-                value={username}
+                value={displayname}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 required
