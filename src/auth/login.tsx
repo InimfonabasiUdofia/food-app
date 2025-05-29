@@ -5,6 +5,7 @@ import { FirebaseError } from 'firebase/app'
 import { Link, useNavigate } from 'react-router-dom'
 import LoadingSpinner from '../../public/Dual Ring@1x-1.0s-200px-200px.svg'
 
+
 // Memoized Input Component
 const InputField = memo(({
   type,
@@ -85,7 +86,7 @@ const Login = () => {
   }, [email, password, navigate, getErrorMessage])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br bg-gray-100 to-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden transition-all transform hover:shadow-xl">
         <div className="p-8">
           <div className="text-center mb-8">
@@ -99,19 +100,24 @@ const Login = () => {
             </div>
           )}
 
-          <form onSubmit={handleEmailLogin} className="space-y-6">
+          <form onSubmit={handleEmailLogin} className="">
+          <label htmlFor="Email" className="block text-sm font-medium text-gray-700 mb-3">
+          Email
+              </label>
             <InputField
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email address"
+              placeholder=""  
             />
-
+             <label htmlFor="password" className="block text-sm font-medium text-gray-700  mb-3 ">
+             Password
+              </label>
             <InputField
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder=""
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -134,20 +140,13 @@ const Login = () => {
               }
               onIconClick={() => setShowPassword(!showPassword)}
             />
-
-            <div className="flex justify-end">
-              <Link 
-                to="/forgot-password" 
-                className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                Forgot password?
-              </Link>
-            </div>
+            <p className="mt-1 text-xs text-gray-500">Minimum 6 characters</p>
+     
 
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+              className={`w-full py-3 mt-5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
             >
               {isLoading ? <img src={LoadingSpinner} alt="Loading" className="mx-auto h-5 w-5" /> : 'Sign In'}
             </button>
